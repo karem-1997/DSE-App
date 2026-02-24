@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE - Ultimate Smart System v5 (Watermark Edition)</title>
+    <title>DSE - Stable System v5.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -22,25 +22,20 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 10px; background-color: #f0f2f5; font-size: 13px; }
         .admin-panel { max-width: 1100px; margin: 10px auto; background: #fff; padding: 15px; border-radius: 12px; border-top: 5px solid var(--main-color); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* ميزة الطي */
         .collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 12px; background: #fafafa; border-radius: 8px; transition: 0.3s; border: 1px solid #eee; margin-bottom: 5px; }
         .collapsible-header:hover { background: #f0f0f0; }
         .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; padding: 0 15px; }
         .collapsible-content.active { max-height: 2000px; padding: 20px 15px; border: 1px solid #eee; border-top: 0; border-radius: 0 0 8px 8px; }
         .arrow { transition: 0.3s; font-size: 16px; color: var(--main-color); }
         .rotate { transform: rotate(180deg); }
-
         h3 { margin: 0; color: var(--main-color); font-size: 1rem; display: flex; align-items: center; gap: 8px; }
         .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
         .form-group { flex: 1; min-width: 180px; display: flex; flex-direction: column; }
         label { font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; }
-        
         .color-box { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; }
         .color-item { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; font-weight: bold; font-size: 12px; }
         .color-picker { width: 40px; height: 30px; border: none; cursor: pointer; }
-
         .btn { padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
         .btn-add { background: #28a745; }
         .btn-save { background: #3498db; }
@@ -48,43 +43,26 @@
         .btn-excel { background: #1d6f42; }
         .btn-new { background: #e67e22; }
         .btn-settings { background: var(--main-color); width: 100%; font-size: 15px; margin-top: 10px; }
-
         .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
         .data-table th, .data-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         .data-table th { background: #f4f4f4; }
 
-        /* الفاتورة والعلامة المائية */
-        .invoice-card { 
-            width: 210mm; min-height: 270mm; margin: 20px auto; background: #fff; padding: 10mm; 
-            box-sizing: border-box; border: 1px solid #eee; position: relative; color: var(--text-color); 
-            z-index: 1; overflow: hidden;
-        }
-        
-        /* تصميم العلامة المائية */
-        .watermark-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
-            width: 70%; opacity: 0.08; /* شفافية عالية جداً لكي لا تخفي الكلام */
-            pointer-events: none; z-index: -1; filter: grayscale(1);
-        }
-
+        .invoice-card { width: 210mm; min-height: 270mm; margin: 20px auto; background: #fff; padding: 10mm; box-sizing: border-box; border: 1px solid #eee; position: relative; color: var(--text-color); z-index: 1; overflow: hidden; }
+        .watermark-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); width: 70%; opacity: 0.08; pointer-events: none; z-index: -1; filter: grayscale(1); }
         .inv-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid var(--main-color); padding-bottom: 15px; margin-bottom: 20px; }
         .logo-container { flex: 1; display: flex; justify-content: flex-end; align-items: center; }
         #logo-img-display { max-height: 85px; max-width: 220px; object-fit: contain; }
         .header-logo-text { font-size: 50px; font-weight: bold; color: var(--main-color); line-height: 1; }
-        
         .header-info { flex: 1.5; text-align: left; dir: ltr; }
         .header-info h1 { font-size: 20px; margin: 0; color: #000; }
         .header-info p { font-size: 11px; margin: 3px 0; }
         .inv-subject { text-align: center; margin: 20px 0; }
         .inv-subject h2 { border: 2px solid var(--border-color); display: inline-block; padding: 7px 50px; font-size: 18px; background: #fcfcfc; }
-
         .print-table { width: 100%; border-collapse: collapse; background: transparent; }
         .print-table th { background: var(--table-head-bg) !important; color: var(--table-head-text) !important; border: 1px solid var(--border-color); padding: 10px; -webkit-print-color-adjust: exact; }
         .print-table td { border: 1px solid var(--border-color); padding: 10px; text-align: center; }
-
         .footer-flex { display: flex; justify-content: space-between; margin-top: 40px; }
         .row-total { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
-
         @media print { .no-print { display: none !important; } .invoice-card { margin: 0; border: none; width: 100%; } }
     </style>
 </head>
@@ -92,63 +70,60 @@
 
     <div class="admin-panel no-print">
         <div class="collapsible-header" onclick="toggleSection('settings-content', 'settings-arrow')">
-            <h3>⚙️ إعدادات الهوية، الألوان، والشعار + العلامة المائية</h3>
+            <h3>⚙️ إعدادات الهوية والبيانات (اضغط للتعديل)</h3>
             <span class="arrow" id="settings-arrow">▼</span>
         </div>
-        
         <div class="collapsible-content" id="settings-content">
             <div class="form-row">
-                <div class="form-group"><label>الاسم (EN)</label><input type="text" id="set_en"></div>
-                <div class="form-group"><label>الاسم (AR)</label><input type="text" id="set_ar"></div>
-                <div class="form-group"><label>TRN</label><input type="text" id="set_trn"></div>
+                <div class="form-group"><label>الاسم بالإنجليزية</label><input type="text" id="set_en"></div>
+                <div class="form-group"><label>الاسم بالعربية</label><input type="text" id="set_ar"></div>
+                <div class="form-group"><label>الرقم الضريبي TRN</label><input type="text" id="set_trn"></div>
             </div>
             <div class="form-row">
                 <div class="form-group"><label>العنوان</label><input type="text" id="set_addr"></div>
-                <div class="form-group"><label>الهاتف</label><input type="text" id="set_ph"></div>
-                <div class="form-group"><label>الموبايل</label><input type="text" id="set_mob"></div>
+                <div class="form-group"><label>الهاتف (Tel)</label><input type="text" id="set_ph"></div>
+                <div class="form-group"><label>الموبايل (Mob)</label><input type="text" id="set_mob"></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><label>نص الشعار</label><input type="text" id="set_logo_text"></div>
-                <div class="form-group"><label>صورة الشعار (الأعلى)</label><input type="file" accept="image/*" onchange="previewImage(this, 'logo')"></div>
-                <div class="form-group"><label>صورة العلامة المائية (الوسط)</label><input type="file" accept="image/*" onchange="previewImage(this, 'watermark')"></div>
+                <div class="form-group"><label>نص اللوجو</label><input type="text" id="set_logo_text"></div>
+                <div class="form-group"><label>رفع لوجو</label><input type="file" accept="image/*" onchange="previewImage(this, 'logo')"></div>
+                <div class="form-group"><label>رفع علامة مائية</label><input type="file" accept="image/*" onchange="previewImage(this, 'watermark')"></div>
             </div>
             <div class="form-row">
-                <div class="form-group"><button class="btn" style="background:#e74c3c" onclick="clearMedia('logo')">حذف الشعار</button></div>
-                <div class="form-group"><button class="btn" style="background:#e74c3c" onclick="clearMedia('watermark')">حذف العلامة المائية</button></div>
+                <div class="form-group"><label>الشروط (Ar)</label><input type="text" id="set_t_ar"></div>
+                <div class="form-group"><label>الشروط (En)</label><input type="text" id="set_t_en"></div>
             </div>
-            
             <div class="color-box">
-                <label style="display:block; margin-bottom:10px; color:var(--main-color); font-weight:bold;">🎨 التحكم بالألوان السحابية:</label>
                 <div class="form-row">
-                    <div class="color-item"><input type="color" id="clr_main" class="color-picker" oninput="liveColor()"><label>الرئيسي</label></div>
-                    <div class="color-item"><input type="color" id="clr_text" class="color-picker" oninput="liveColor()"><label>النصوص</label></div>
-                    <div class="color-item"><input type="color" id="clr_bg" class="color-picker" oninput="liveColor()"><label>رأس الجدول</label></div>
-                    <div class="color-item"><input type="color" id="clr_head_txt" class="color-picker" oninput="liveColor()"><label>عناوين الجدول</label></div>
-                    <div class="color-item"><input type="color" id="clr_border" class="color-picker" oninput="liveColor()"><label>الحدود</label></div>
+                    <div class="color-item"><input type="color" id="clr_main" class="color-picker" oninput="liveColor()"><label>رئيسي</label></div>
+                    <div class="color-item"><input type="color" id="clr_text" class="color-picker" oninput="liveColor()"><label>نصوص</label></div>
+                    <div class="color-item"><input type="color" id="clr_bg" class="color-picker" oninput="liveColor()"><label>جدول</label></div>
+                    <div class="color-item"><input type="color" id="clr_head_txt" class="color-picker" oninput="liveColor()"><label>خط الجدول</label></div>
+                    <div class="color-item"><input type="color" id="clr_border" class="color-picker" oninput="liveColor()"><label>حدود</label></div>
                 </div>
             </div>
-            <button class="btn btn-settings" onclick="saveProfile()">💾 حفظ وتثبيت كافة الإعدادات</button>
+            <button class="btn btn-settings" onclick="saveProfile()">💾 حفظ البيانات وتحديث الفاتورة</button>
         </div>
     </div>
 
     <div class="admin-panel no-print">
         <h3>📄 تحرير فاتورة جديدة</h3>
         <div class="form-row">
-            <div class="form-group"><label>السيد / العميل</label><input type="text" id="in_cust" oninput="sync()"></div>
+            <div class="form-group"><label>اسم العميل</label><input type="text" id="in_cust" oninput="sync()"></div>
             <div class="form-group"><label>هاتف العميل</label><input type="text" id="in_cust_ph" oninput="sync()"></div>
             <div class="form-group"><label>رقم الفاتورة</label><input type="text" id="in_no" readonly></div>
             <div class="form-group"><label>التاريخ</label><input type="date" id="in_date" oninput="sync()"></div>
         </div>
-        <div class="form-row" style="background:#fcfcfc; padding:15px; border-radius:10px; border:1px solid #eee;">
+        <div class="form-row" style="background:#f9f9f9; padding:10px; border-radius:8px;">
             <div class="form-group" style="flex:2"><label>الوصف</label><input type="text" id="p_desc"></div>
-            <div class="form-group"><label>الكود</label><input type="text" id="p_code"></div>
-            <div class="form-group"><label>الكمية</label><input type="number" id="p_qty" value="1"></div>
-            <div class="form-group"><label>السعر</label><input type="number" id="p_price"></div>
-            <div class="form-group"><label>الضريبة</label><select id="p_vat"><option value="0.05">5% VAT</option><option value="0">0%</option></select></div>
+            <div class="form-group"><label>كود</label><input type="text" id="p_code"></div>
+            <div class="form-group"><label>كمية</label><input type="number" id="p_qty" value="1"></div>
+            <div class="form-group"><label>سعر</label><input type="number" id="p_price"></div>
+            <div class="form-group"><label>ضريبة</label><select id="p_vat"><option value="0.05">5%</option><option value="0">0%</option></select></div>
             <button class="btn btn-add" style="margin-top:22px" onclick="addItem()">+ إضافة</button>
         </div>
         <table class="data-table">
-            <thead><tr><th>الوصف</th><th>الكود</th><th>الكمية</th><th>السعر</th><th>إجراء</th></tr></thead>
+            <thead><tr><th>الوصف</th><th>الكمية</th><th>السعر</th><th>إجراء</th></tr></thead>
             <tbody id="edit_body"></tbody>
         </table>
         <div class="form-row" style="margin-top:20px; justify-content:center; gap:10px;">
@@ -159,26 +134,25 @@
     </div>
 
     <div class="invoice-card" id="invoice">
-        <img id="watermark-display" class="watermark-overlay" src="" style="display:none;">
-        
+        <img id="watermark-display" class="watermark-overlay" src="">
         <div class="inv-header">
-            <div class="logo-container" id="logo-display-area">
-                <span id="logo-text-display" class="header-logo-text">DSE</span>
+            <div class="logo-container">
+                <span id="logo-text-display" class="header-logo-text"></span>
                 <img id="logo-img-display" src="" style="display:none;">
             </div>
             <div class="header-info">
-                <h1 id="out_en">...</h1><p id="out_ar">...</p><p id="out_addr">...</p>
-                <p>Tel: <span id="out_ph">...</span> | Mob: <span id="out_mob">...</span></p>
-                <p><strong>TRN: <span id="out_trn">...</span></strong></p>
+                <h1 id="out_en"></h1><p id="out_ar"></p><p id="out_addr"></p>
+                <p>Tel: <span id="out_ph"></span> | Mob: <span id="out_mob"></span></p>
+                <p><strong>TRN: <span id="out_trn"></span></strong></p>
             </div>
         </div>
         <div class="inv-subject"><h2>TAX INVOICE / فاتورة ضريبية</h2></div>
         <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
             <div><strong>To:</strong> <span id="out_cust">...</span><br><strong>PH:</strong> <span id="out_cust_ph">...</span></div>
-            <div style="text-align:left" dir="ltr"><strong>Inv No:</strong> <span id="out_no_disp">...</span><br><strong>Date:</strong> <span id="out_date_disp">...</span></div>
+            <div style="text-align:left" dir="ltr"><strong>Inv No:</strong> <span id="out_no_disp"></span><br><strong>Date:</strong> <span id="out_date_disp"></span></div>
         </div>
         <table class="print-table">
-            <thead><tr><th>No.</th><th>Code</th><th>Description / الوصف</th><th>Qty</th><th>Price</th><th>Tax</th><th>Total</th></tr></thead>
+            <thead><tr><th>No.</th><th>Code</th><th>Description</th><th>Qty</th><th>Price</th><th>Tax</th><th>Total</th></tr></thead>
             <tbody id="items_body"></tbody>
         </table>
         <div class="footer-flex">
@@ -194,16 +168,12 @@
         </div>
     </div>
 
-    <div class="admin-panel no-print" style="margin-bottom: 50px;">
+    <div class="admin-panel no-print">
         <div class="collapsible-header" onclick="toggleSection('archive-content', 'archive-arrow')">
             <h3>📁 أرشيف الفواتير والبحث</h3>
             <span class="arrow" id="archive-arrow">▼</span>
         </div>
         <div class="collapsible-content" id="archive-content">
-            <div class="form-row">
-                <input type="text" id="search_input" placeholder="بحث..." onkeyup="filterArchive()" style="flex:1">
-                <button class="btn btn-excel" onclick="exportDetailedExcel()">📊 Excel تقرير</button>
-            </div>
             <table class="data-table">
                 <thead><tr><th>الرقم</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th>إجراء</th></tr></thead>
                 <tbody id="archive_body"></tbody>
@@ -223,7 +193,7 @@
         };
         firebase.initializeApp(firebaseConfig); 
         const db = firebase.database();
-        let items = []; let logoImg = ""; let waterImg = ""; let allInvoices = {};
+        let items = []; let logoImg = ""; let waterImg = "";
 
         function toggleSection(cid, aid) {
             document.getElementById(cid).classList.toggle('active');
@@ -243,16 +213,11 @@
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = e => {
-                    if(type === 'logo') { logoImg = e.target.result; displayLogo(logoImg, ""); }
-                    else { waterImg = e.target.result; displayWatermark(waterImg); }
+                    if(type === 'logo') { logoImg = e.target.result; displayLogo(logoImg, document.getElementById('set_logo_text').value); }
+                    else { waterImg = e.target.result; document.getElementById('watermark-display').src = waterImg; }
                 };
                 reader.readAsDataURL(input.files[0]);
             }
-        }
-
-        function clearMedia(type) {
-            if(type === 'logo') { logoImg = ""; displayLogo("", document.getElementById('set_logo_text').value); }
-            else { waterImg = ""; displayWatermark(""); }
         }
 
         function displayLogo(img, txt) {
@@ -260,12 +225,6 @@
             const tEl = document.getElementById('logo-text-display');
             if(img) { iEl.src = img; iEl.style.display="block"; tEl.style.display="none"; }
             else { iEl.style.display="none"; tEl.innerText = txt || "DSE"; tEl.style.display="block"; }
-        }
-
-        function displayWatermark(img) {
-            const wEl = document.getElementById('watermark-display');
-            if(img) { wEl.src = img; wEl.style.display = "block"; }
-            else { wEl.style.display = "none"; }
         }
 
         function saveProfile() {
@@ -279,13 +238,17 @@
                 c3: document.getElementById('clr_bg').value, c4: document.getElementById('clr_head_txt').value,
                 c5: document.getElementById('clr_border').value
             };
-            db.ref('companyProfile').set(profile).then(() => alert("✅ تم حفظ الهوية واللوجو والعلامة المائية"));
+            db.ref('companyProfile').set(profile).then(() => {
+                alert("✅ تم حفظ وتحديث البيانات");
+                location.reload(); // لإعادة تحميل كل شيء في مكانه
+            });
         }
 
         function loadProfile() {
             db.ref('companyProfile').on('value', snap => {
                 const d = snap.val();
                 if(d) {
+                    // ملء المدخلات
                     document.getElementById('set_en').value = d.en || ''; document.getElementById('set_ar').value = d.ar || '';
                     document.getElementById('set_trn').value = d.trn || ''; document.getElementById('set_addr').value = d.addr || '';
                     document.getElementById('set_ph').value = d.ph || ''; document.getElementById('set_mob').value = d.mob || '';
@@ -295,17 +258,22 @@
                     document.getElementById('clr_main').value = d.c1 || '#c5a021'; document.getElementById('clr_text').value = d.c2 || '#1a1a1a';
                     document.getElementById('clr_bg').value = d.c3 || '#f2f2f2'; document.getElementById('clr_head_txt').value = d.c4 || '#000000';
                     document.getElementById('clr_border').value = d.c5 || '#000000';
-                    
-                    document.getElementById('out_en').innerText = d.en; document.getElementById('out_ar').innerText = d.ar;
-                    document.getElementById('out_trn').innerText = d.trn; document.getElementById('out_addr').innerText = d.addr;
-                    document.getElementById('out_ph').innerText = d.ph; document.getElementById('out_mob').innerText = d.mob;
-                    document.getElementById('out_t_ar').innerText = "- " + d.t_ar; document.getElementById('out_t_en').innerText = "- " + d.t_en;
-                    displayLogo(logoImg, d.logoTxt); displayWatermark(waterImg); liveColor();
+
+                    // تحديث الفاتورة فوراً
+                    document.getElementById('out_en').innerText = d.en || '';
+                    document.getElementById('out_ar').innerText = d.ar || '';
+                    document.getElementById('out_trn').innerText = d.trn || '';
+                    document.getElementById('out_addr').innerText = d.addr || '';
+                    document.getElementById('out_ph').innerText = d.ph || '';
+                    document.getElementById('out_mob').innerText = d.mob || '';
+                    document.getElementById('out_t_ar').innerText = d.t_ar ? "- " + d.t_ar : "";
+                    document.getElementById('out_t_en').innerText = d.t_en ? "- " + d.t_en : "";
+                    document.getElementById('watermark-display').src = waterImg;
+                    displayLogo(logoImg, d.logoTxt); liveColor();
                 }
             });
         }
 
-        // الوظائف الأساسية
         function addItem() {
             const desc = document.getElementById('p_desc').value, price = parseFloat(document.getElementById('p_price').value),
                   qty = parseFloat(document.getElementById('p_qty').value), vat = parseFloat(document.getElementById('p_vat').value),
@@ -321,16 +289,10 @@
             items.forEach((it, i) => {
                 const total = it.qty * it.price; const vAmt = total * it.vatRate; sub += total; vat += vAmt;
                 pBody.innerHTML += `<tr><td>${i+1}</td><td>${it.code}</td><td style="text-align:right">${it.desc}</td><td>${it.qty}</td><td>${it.price.toFixed(2)}</td><td>${it.vatRate>0?'5%':'0%'}</td><td>${(total+vAmt).toFixed(2)}</td></tr>`;
-                eBody.innerHTML += `<tr><td>${it.desc}</td><td>${it.qty}</td><td>${it.price}</td><td><button onclick="editItem(${i})">✏️</button> <button onclick="items.splice(${i},1);render()">🗑️</button></td></tr>`;
+                eBody.innerHTML += `<tr><td>${it.desc}</td><td>${it.qty}</td><td>${it.price}</td><td><button onclick="items.splice(${i},1);render()">🗑️</button></td></tr>`;
             });
             document.getElementById('sub_val').innerText = sub.toFixed(2); document.getElementById('vat_val').innerText = vat.toFixed(2);
             document.getElementById('net_val').innerText = (sub + vat).toFixed(2);
-        }
-
-        function editItem(i) {
-            const it = items[i]; document.getElementById('p_desc').value = it.desc; document.getElementById('p_code').value = it.code;
-            document.getElementById('p_qty').value = it.qty; document.getElementById('p_price').value = it.price;
-            items.splice(i, 1); render();
         }
 
         function sync() {
@@ -345,51 +307,24 @@
             db.ref('invoices/' + id).set({
                 no: id, cust: document.getElementById('in_cust').value, cph: document.getElementById('in_cust_ph').value,
                 date: document.getElementById('in_date').value, items: items, total: document.getElementById('net_val').innerText
-            }).then(() => alert("✅ تم الحفظ"));
+            }).then(() => alert("✅ تم حفظ الفاتورة"));
         }
 
-        db.ref('invoices').on('value', snap => { allInvoices = snap.val() || {}; displayArchive(allInvoices); });
-
-        function displayArchive(data) {
-            const body = document.getElementById('archive_body'); body.innerHTML = '';
+        db.ref('invoices').on('value', snap => {
+            const data = snap.val() || {}; const body = document.getElementById('archive_body'); body.innerHTML = '';
             Object.keys(data).reverse().forEach(id => {
                 const inv = data[id];
-                body.innerHTML += `<tr><td>${inv.no}</td><td>${inv.cust || 'N/A'}</td><td>${inv.date}</td><td>${inv.total}</td><td><button onclick="loadInv('${id}')">📄</button> <button onclick="deleteInv('${id}')">🗑️</button></td></tr>`;
+                body.innerHTML += `<tr><td>${inv.no}</td><td>${inv.cust}</td><td>${inv.date}</td><td>${inv.total}</td><td><button onclick="loadInv('${id}')">📄</button></td></tr>`;
             });
-        }
+        });
 
         function loadInv(id) {
-            const inv = allInvoices[id];
-            document.getElementById('in_no').value = inv.no; document.getElementById('in_cust').value = inv.cust;
-            document.getElementById('in_cust_ph').value = inv.cph || ''; document.getElementById('in_date').value = inv.date;
-            items = inv.items || []; render(); sync(); window.scrollTo({ top: 400, behavior: 'smooth' });
-        }
-
-        function deleteInv(id) { if(confirm("حذف؟")) db.ref('invoices/' + id).remove(); }
-
-        function filterArchive() {
-            const val = document.getElementById('search_input').value.toLowerCase();
-            const filtered = {};
-            Object.keys(allInvoices).forEach(id => { if(id.includes(val) || allInvoices[id].cust.toLowerCase().includes(val)) filtered[id] = allInvoices[id]; });
-            displayArchive(filtered);
-        }
-
-        function exportDetailedExcel() {
-            let arr = [];
-            Object.values(allInvoices).forEach(v => {
-                if(v.items) v.items.forEach(it => arr.push({ "رقم": v.no, "العميل": v.cust, "التاريخ": v.date, "الصنف": it.desc, "الإجمالي": (it.qty * it.price * (1+it.vatRate)).toFixed(2) }));
+            db.ref('invoices/' + id).once('value', s => {
+                const inv = s.val(); document.getElementById('in_no').value = inv.no; document.getElementById('in_cust').value = inv.cust;
+                document.getElementById('in_cust_ph').value = inv.cph; document.getElementById('in_date').value = inv.date;
+                items = inv.items || []; render(); sync();
             });
-            const ws = XLSX.utils.json_to_sheet(arr); const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Data"); XLSX.writeFile(wb, "Report.xlsx");
         }
 
         window.onload = () => {
-            loadProfile(); document.getElementById('in_date').valueAsDate = new Date();
-            db.ref('invoices').limitToLast(1).once('value', s => {
-                let n = 1001; if(s.val()) n = parseInt(Object.keys(s.val())[0]) + 1;
-                document.getElementById('in_no').value = n; sync();
-            });
-        };
-    </script>
-</body>
-</html>
+            loadProfile(); document.getElementById
