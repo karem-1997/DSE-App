@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE - Professional System v5.3</title>
+    <title>DSE - Professional System v5.4</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -22,19 +22,16 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 10px; background-color: #f0f2f5; font-size: 13px; }
         .admin-panel { max-width: 1100px; margin: 10px auto; background: #fff; padding: 15px; border-radius: 12px; border-top: 5px solid var(--main-color); box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        
         .collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 12px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; margin-bottom: 5px; transition: 0.3s; }
         .collapsible-header:hover { background: #f0f0f0; }
         .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; padding: 0 15px; }
         .collapsible-content.active { max-height: 2000px; padding: 20px 15px; border: 1px solid #eee; border-top: 0; }
         .arrow { transition: 0.3s; font-size: 16px; color: var(--main-color); }
         .rotate { transform: rotate(180deg); }
-
         .form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
         .form-group { flex: 1; min-width: 180px; display: flex; flex-direction: column; }
         label { font-size: 0.75rem; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; }
-        
         .btn { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-add { background: #28a745; }
         .btn-save { background: #3498db; }
@@ -43,33 +40,25 @@
         .btn-delete { background: #e74c3c; padding: 5px 10px; font-size: 11px; }
         .btn-clear { background: #95a5a6; padding: 5px; font-size: 10px; margin-top: 5px; }
         .btn-settings { background: var(--main-color); width: 100%; margin-top: 10px; padding: 15px; }
-
         .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .data-table th, .data-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         .data-table th { background: #f4f4f4; }
-
         .invoice-card { width: 210mm; min-height: 270mm; margin: 20px auto; background: #fff; padding: 10mm; box-sizing: border-box; border: 1px solid #eee; position: relative; color: var(--text-color); z-index: 1; overflow: hidden; }
         .watermark-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); width: 60%; opacity: 0.08; pointer-events: none; z-index: -1; }
-        
         .inv-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid var(--main-color); padding-bottom: 15px; margin-bottom: 20px; }
         .logo-container { flex: 1; display: flex; justify-content: flex-end; align-items: center; }
         #logo-img-display { max-height: 85px; max-width: 220px; object-fit: contain; }
         .header-logo-text { font-size: 50px; font-weight: bold; color: var(--main-color); line-height: 1; }
-        
         .header-info { flex: 1.5; text-align: left; dir: ltr; }
         .header-info h1 { font-size: 20px; margin: 0; color: #000; }
         .header-info p { font-size: 11px; margin: 3px 0; }
-        
         .inv-subject { text-align: center; margin: 20px 0; }
         .inv-subject h2 { border: 2px solid var(--border-color); display: inline-block; padding: 7px 50px; font-size: 18px; background: #fcfcfc; }
-
         .print-table { width: 100%; border-collapse: collapse; background: transparent; }
         .print-table th { background: var(--table-head-bg) !important; color: var(--table-head-text) !important; border: 1px solid var(--border-color); padding: 10px; -webkit-print-color-adjust: exact; }
         .print-table td { border: 1px solid var(--border-color); padding: 10px; text-align: center; }
-
         .footer-flex { display: flex; justify-content: space-between; margin-top: 40px; }
         .row-total { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
-
         @media print { .no-print { display: none !important; } .invoice-card { margin: 0; border: none; width: 100%; } }
     </style>
 </head>
@@ -256,6 +245,7 @@
             else { iEl.style.display="none"; tEl.innerText = txt || "DSE"; tEl.style.display="block"; }
         }
 
+        // الوظيفة المصلحة: حفظ وتحديث الفاتورة لحظياً
         function saveProfile() {
             const profile = {
                 en: document.getElementById('set_en').value, ar: document.getElementById('set_ar').value,
@@ -267,29 +257,50 @@
                 c3: document.getElementById('clr_bg').value, c4: document.getElementById('clr_head_txt').value,
                 c5: document.getElementById('clr_border').value
             };
-            db.ref('companyProfile').set(profile).then(() => { alert("✅ تم حفظ الهوية"); location.reload(); });
+            db.ref('companyProfile').set(profile).then(() => { 
+                alert("✅ تم حفظ وتحديث الهوية بنجاح");
+                applyProfileToInvoice(profile); // تطبيق التحديث فوراً دون الحاجة لإعادة تحميل الصفحة
+            });
+        }
+
+        // وظيفة وسيطة لتطبيق البيانات على الفاتورة
+        function applyProfileToInvoice(d) {
+            if(!d) return;
+            document.getElementById('out_en').innerText = d.en || ''; 
+            document.getElementById('out_ar').innerText = d.ar || '';
+            document.getElementById('out_trn').innerText = d.trn || ''; 
+            document.getElementById('out_addr').innerText = d.addr || '';
+            document.getElementById('out_ph').innerText = d.ph || ''; 
+            document.getElementById('out_mob').innerText = d.mob || '';
+            document.getElementById('out_t_ar').innerText = d.t_ar ? "- " + d.t_ar : "";
+            document.getElementById('out_t_en').innerText = d.t_en ? "- " + d.t_en : "";
+            document.getElementById('watermark-display').src = d.waterImg || "";
+            displayLogo(d.logoImg, d.logoTxt);
+            liveColor();
         }
 
         function loadProfile() {
             db.ref('companyProfile').on('value', snap => {
                 const d = snap.val();
                 if(d) {
-                    document.getElementById('set_en').value = d.en || ''; document.getElementById('set_ar').value = d.ar || '';
-                    document.getElementById('set_trn').value = d.trn || ''; document.getElementById('set_addr').value = d.addr || '';
-                    document.getElementById('set_ph').value = d.ph || ''; document.getElementById('set_mob').value = d.mob || '';
+                    // تعبئة خانات المدخلات في الإعدادات
+                    document.getElementById('set_en').value = d.en || ''; 
+                    document.getElementById('set_ar').value = d.ar || '';
+                    document.getElementById('set_trn').value = d.trn || ''; 
+                    document.getElementById('set_addr').value = d.addr || '';
+                    document.getElementById('set_ph').value = d.ph || ''; 
+                    document.getElementById('set_mob').value = d.mob || '';
                     document.getElementById('set_logo_text').value = d.logoTxt || ''; 
                     logoImg = d.logoImg || ""; waterImg = d.waterImg || "";
-                    document.getElementById('set_t_ar').value = d.t_ar || ''; document.getElementById('set_t_en').value = d.t_en || '';
-                    document.getElementById('clr_main').value = d.c1 || '#c5a021'; document.getElementById('clr_text').value = d.c2 || '#1a1a1a';
-                    document.getElementById('clr_bg').value = d.c3 || '#f2f2f2'; document.getElementById('clr_head_txt').value = d.c4 || '#000000';
+                    document.getElementById('set_t_ar').value = d.t_ar || ''; 
+                    document.getElementById('set_t_en').value = d.t_en || '';
+                    document.getElementById('clr_main').value = d.c1 || '#c5a021'; 
+                    document.getElementById('clr_text').value = d.c2 || '#1a1a1a';
+                    document.getElementById('clr_bg').value = d.c3 || '#f2f2f2'; 
+                    document.getElementById('clr_head_txt').value = d.c4 || '#000000';
                     document.getElementById('clr_border').value = d.c5 || '#000000';
-                    document.getElementById('out_en').innerText = d.en || ''; document.getElementById('out_ar').innerText = d.ar || '';
-                    document.getElementById('out_trn').innerText = d.trn || ''; document.getElementById('out_addr').innerText = d.addr || '';
-                    document.getElementById('out_ph').innerText = d.ph || ''; document.getElementById('out_mob').innerText = d.mob || '';
-                    document.getElementById('out_t_ar').innerText = d.t_ar ? "- " + d.t_ar : "";
-                    document.getElementById('out_t_en').innerText = d.t_en ? "- " + d.t_en : "";
-                    document.getElementById('watermark-display').src = waterImg;
-                    displayLogo(logoImg, d.logoTxt); liveColor();
+                    
+                    applyProfileToInvoice(d); // تطبيق على الفاتورة عند أول تحميل
                 }
             });
         }
@@ -327,10 +338,9 @@
             db.ref('invoices/' + id).set({
                 no: id, cust: document.getElementById('in_cust').value, cph: document.getElementById('in_cust_ph').value,
                 date: document.getElementById('in_date').value, items: items, total: document.getElementById('net_val').innerText
-            }).then(() => alert("✅ تم الحفظ"));
+            }).then(() => alert("✅ تم حفظ الفاتورة"));
         }
 
-        // جلب الأرشيف وتخزينه للبحث
         db.ref('invoices').on('value', snap => {
             allInvoices = snap.val() || {};
             displayArchive(allInvoices);
